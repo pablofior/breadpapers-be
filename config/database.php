@@ -2,6 +2,15 @@
 
 use Illuminate\Support\Str;
 
+/*
+     * HEROKU DATABASE URL ($ heroku config)
+     *
+     * $DATABASE_URL=parse_url('postgres://gpsgrgawpfasmm:dc6e80473a93927cc2fd8688c7eab41be79ca8c728b5c5b6209fd5b91ca931ca@ec2-107-20-168-237.compute-1.amazonaws.com:5432/d2vr1cgp54hmfh');
+
+     */
+
+$DATABASE_URL = parse_url('postgres://gpsgrgawpfasmm:dc6e80473a93927cc2fd8688c7eab41be79ca8c728b5c5b6209fd5b91ca931ca@ec2-107-20-168-237.compute-1.amazonaws.com:5432/d2vr1cgp54hmfh');
+
 return [
 
     /*
@@ -15,7 +24,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -63,19 +72,40 @@ return [
             ]) : [],
         ],
 
+        /*
+         *  ORIGINAL
+         */
+
+//        'pgsql' => [
+//            'driver' => 'pgsql',
+//            'url' => env('DATABASE_URL'),
+//            'host' => env('DB_HOST', '127.0.0.1'),
+//            'port' => env('DB_PORT', '5432'),
+//            'database' => env('DB_DATABASE', 'forge'),
+//            'username' => env('DB_USERNAME', 'forge'),
+//            'password' => env('DB_PASSWORD', ''),
+//            'charset' => 'utf8',
+//            'prefix' => '',
+//            'prefix_indexes' => true,
+//            'schema' => 'public',
+//            'sslmode' => 'prefer',
+//        ],
+
+        /*
+         *  HEROKU
+         */
+
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'host' => $DATABASE_URL["host"],
+            'port' => $DATABASE_URL["port"],
+            'database' => ltrim($DATABASE_URL["path"], "/"),
+            'username' => $DATABASE_URL["user"],
+            'password' => $DATABASE_URL["pass"],
             'charset' => 'utf8',
             'prefix' => '',
-            'prefix_indexes' => true,
             'schema' => 'public',
-            'sslmode' => 'prefer',
+            'sslmode' => 'require',
         ],
 
         'sqlsrv' => [
