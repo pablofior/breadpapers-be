@@ -16,7 +16,6 @@ class UserTableSeeder extends Seeder
                 'name' => 'admin',
                 'email' => 'pabloribasfior@gmail.com',
                 'password' => \Illuminate\Support\Facades\Hash::make('123123'),
-                'api_token' => hash('sha256', \Illuminate\Support\Str::random(60)),
             ]
         );
     }
