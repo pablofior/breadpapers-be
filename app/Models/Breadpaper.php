@@ -1,25 +1,18 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: pablo
+ * Date: 20/07/19
+ * Time: 22:27
+ */
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
-use Prettus\Repository\Contracts\Transformable;
-use Prettus\Repository\Traits\TransformableTrait;
 
-/**
- * Class Breadpaper.
- *
- * @package namespace App\Models;
- */
-class Breadpaper extends Model implements Transformable
+class Breadpaper extends Model
 {
-    use TransformableTrait;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'title',
         'content',
@@ -30,5 +23,4 @@ class Breadpaper extends Model implements Transformable
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
 }
