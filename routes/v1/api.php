@@ -14,7 +14,25 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+
+    Route::prefix('user')
+        ->name('user.')
+        ->group(function() {
+            Route::get('/get-logged', 'UserController@getLoggedUser')->name('get');
+            Route::get('/all', 'UserController@all')->name('all');
+            Route::post('/store', "UserController@store")->name('store');
+            Route::post('/update/{id}', 'UserController@update')->name('update');
+            Route::delete('/delete/{id}', 'UserController@delete')->name('delete');
+        });
+
+    Route::prefix('breadpaper')
+        ->name('breadpaper.')
+        ->group(function() {
+            Route::post('/store', 'BreadpaperController@store')->name('store');
+            Route::post('/update', 'BreadpaperController@update')->name('update');
+            Route::post('/sync-collaborators', 'BreadpaperController@syncCollaborators')->name('sync');
+            Route::get('/get-owned/{userId}', 'BreadpaperController@getOwned')->name('owned');
+            Route::get('/get-collaborating/{userId}', 'BreadpaperController@getCollaborating')->name('collaborating');
+        });
+
 });

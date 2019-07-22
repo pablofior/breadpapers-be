@@ -43,6 +43,20 @@ class User extends Authenticatable
 
     public function breadpapers()
     {
-        return $this->hasMany(Breadpaper::class, 'user_id', 'id');
+        return $this->belongsToMany(
+            Breadpaper::class,
+            'breadpaper_has_users',
+            'breadpaper_id',
+            'user_id'
+        );
+    }
+
+    public function ownedBreadpapers()
+    {
+        return $this->hasMany(
+            Breadpaper::class,
+            'user_id',
+            'id'
+        );
     }
 }

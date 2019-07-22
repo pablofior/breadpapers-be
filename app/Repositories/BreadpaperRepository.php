@@ -19,4 +19,13 @@ class BreadpaperRepository extends Repository implements RepositoryInterface
     {
         return Breadpaper::class;
     }
+
+    public function addCollaborators($collaborators, $breadpaperId)
+    {
+        $breadpaper = $this->find($breadpaperId);
+
+        $breadpaper->collaborators()->sync($collaborators);
+
+        return $breadpaper;
+    }
 }

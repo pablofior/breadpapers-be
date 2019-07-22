@@ -14,6 +14,12 @@ class Breadpaper extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'content' => $this->content,
+            'collaborators' => $this->collaborators,
+            'owner' => $this->owner,
+        ];
     }
 }
