@@ -10,6 +10,7 @@ namespace App\Http\Controllers\v1;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TestRequest;
 use App\Http\Requests\UserEditRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\User as UserResource;
@@ -147,7 +148,7 @@ class UserController extends Controller
         return response()->success('deleted');
     }
 
-    public function getLoggedUser(Request $request)
+    public function getLoggedUser(TestRequest $request)
     {
         return new UserResource(Auth::user());
     }
