@@ -10,6 +10,9 @@ namespace App\Http\Controllers\v1;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BreadpaperStoreRequest;
+use App\Http\Requests\BreadpaperSyncCollaboratorsRequest;
+use App\Http\Requests\BreadpaperUpdateRequest;
 use App\Http\Resources\Breadpaper as BreadpaperResource;
 use App\Http\Resources\BreadpaperCollection;
 use App\Repositories\BreadpaperRepository;
@@ -28,24 +31,12 @@ class BreadpaperController extends Controller
         $this->repo = $repository;
     }
 
-    public function store(Request $request)
+    public function store(BreadpaperStoreRequest $request)
     {
-        $data = $request->only('title', 'content', 'user_id');
+        $data = $request->validated();
 
-        $validator = validate($data,
-            [
-                'title' => ['required', 'string'],
-                'content' => ['required', 'string'],
-                'user_id' => ['required', Rule::exists('users', 'id')]
-            ]
-        );
-//
-        if($validator->fails()) {
-            return response()->json($validator->errors());
-        }
-//
         DB::beginTransaction();
-//
+
         try {
 
             $breadpaper = $this->repo->create($data);
@@ -58,29 +49,13 @@ class BreadpaperController extends Controller
 
             return response()->error($e);
         }
-//
-//        }
-//
-//        return response()->success($breadpaper);
 
         return new BreadpaperResource($breadpaper);
     }
 
-    public function update(Request $request, $id)
+    public function update(BreadpaperUpdateRequest $request, $id)
     {
-        $data = $request->only('title', 'content');
-
-        $validator = validate($data,
-            [
-                'title' => ['required', 'string'],
-                'content' => ['required', 'string'],
-                'user_id' => ['required', Rule::exists('users', 'id')]
-            ]
-        );
-
-        if($validator->fails()) {
-            return response()->json($validator->errors());
-        }
+        $data = $request->validated();
 
         DB::beginTransaction();
 
@@ -100,21 +75,9 @@ class BreadpaperController extends Controller
         return new BreadpaperResource($breadpaper);
     }
 
-    public function syncCollaborators(Request $request)
+    public function syncCollaborators(BreadpaperSyncCollaboratorsRequest $request)
     {
-        $data = $request->only('breadpaper_id', 'user_id', 'collaborators');
-
-        $validator = validate($data,
-            [
-                'breadpaper_id' => ['required', Rule::exists('breadpapers', 'id')],
-                'user_id' => ['required', Rule::exists('users', 'id')],
-                'collaborators.*' => ['required',  Rule::exists('users', 'id')],
-            ]
-        );
-
-        if($validator->fails()) {
-            return response()->json($validator->errors());
-        }
+        $data = $request->validated();
 
         DB::beginTransaction();
 

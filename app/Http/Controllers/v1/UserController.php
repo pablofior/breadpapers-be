@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TestRequest;
 use App\Http\Requests\UserEditRequest;
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection;
 use App\Repositories\UserRepository;
@@ -43,20 +44,9 @@ class UserController extends Controller
      *
      * @return App\Http\Resources\User
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        $data = $request->only('email', 'password', 'name', 'password_confirmation');
-
-        $validator = validate($data,
-            [
-                'email' => ['required', 'email', Rule::unique('users', 'email')],
-                'password' => ['required', 'confirmed', 'min:6']
-            ]
-        );
-
-        if($validator->fails()) {
-            return response()->error($validator->errors());
-        }
+        $data = $request->validated();
 
         $data['password'] = Hash::make($data['password']);
 
@@ -88,22 +78,9 @@ class UserController extends Controller
      *
      * @return App\Http\Resources\User
      */
-    public function update(Request $request, $id)
+    public function update(UserUpdateRequest $request, $id)
     {
-        $data = $request->all();
-
-        $validator = validate($data,
-            [
-                'name' => ['required', 'string'],
-                'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($id)],
-                'password' => ['nullable', 'min:6', 'confirmed'],
-                'password_confirmation' => ['required_with:password', 'string']
-            ]
-        );
-
-        if($validator->fails()) {
-            return response($validator->errors());
-        }
+        $data = $request->validated();
 
         if(isset($data['password']))
             $data['password'] = Hash::make($data['password']);
@@ -135,6 +112,8 @@ class UserController extends Controller
 
             $user->breadpapers()->delete();
 
+            $user->ownedBreadpapers()->delete();
+
             $this->repo->delete($id);
 
             DB::commit();
@@ -148,7 +127,7 @@ class UserController extends Controller
         return response()->success('deleted');
     }
 
-    public function getLoggedUser(TestRequest $request)
+    public function getLoggedUser(Request $request)
     {
         return new UserResource(Auth::user());
     }
